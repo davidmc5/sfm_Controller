@@ -7,6 +7,7 @@ from subprocess import call
 from threading import Timer
 from threading import Thread
 import paho.mqtt.client as mqtt
+from datetime import datetime, timezone
 
 # import RPi.GPIO as GPIO
 import time
@@ -78,7 +79,10 @@ def on_message(client, userdata, message):
     for i, element in enumerate(topicKeys):
         print ("key", i, element)
 
-    print ("Payload: ", str(message.payload.decode("utf-8")))
+    payload = str(message.payload.decode("utf-8"))
+
+    # print ("Payload: ", str(message.payload.decode("utf-8")))
+    print ("Payload: ", payload)
 
     nodeId = topicKeys[1] #This will be true for all messages published by nodes
 
@@ -109,6 +113,20 @@ def on_message(client, userdata, message):
         # THEN THE CONTROLLER SHOULD UPDATE FIREBASE WITH THE NODE STATUS, SETTINGS AND CAPABILITIES
         # THEN FIREBASE SHOULD UPDATE SETTINGS FOR MASTER, BACKUP AND SITE CONTROLLERS
         # THEN THE NODE SHOULD TEST ALL CONTROLLERS TO DETERMINE CONNECTIVITY
+
+    # Record crash info
+    elif (str(topicKeys[0]) == 'status'):
+
+        nodeId = topicKeys[1]
+        f = open("node_status.log", "a")
+        f.write(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
+        f.write(' >>> ')
+        f.write(nodeId)
+        f.write(' : ')
+        f.write(payload)
+        f.write("\n")
+        f.close()
+
 
 
 def on_connect(client, userdata, flags, rc):
@@ -209,12 +227,12 @@ def main():
         ## FOR TEST ONLY.
         ##This will increase the size of a local file (message.txt)
         ## log the key/value (switch /state) received from firebase
-        f = open("message.txt", "a")
-        for arg in status:
-            f.write(arg)
-            f.write(' : ')
-        f.write("\n")
-        f.close()
+        # f = open("message.txt", "a")
+        # for arg in status:
+        #     f.write(arg)
+        #     f.write(' : ')
+        # f.write("\n")
+        # f.close()
         #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         # RELAY Control
 
