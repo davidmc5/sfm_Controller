@@ -1,7 +1,8 @@
 
 ######
-# HOW TO SET A PATH LIKE /FOTA?
-
+#stackoverflow.com/a/18543710
+fwFolder = "/home/sfm/fw"
+# fwFile = "node-rev-1.bin"
 
 
 try:
@@ -13,10 +14,19 @@ import os
 import shutil
 import sys
 
-FILEPATH = sys.argv[1] if sys.argv[1:] else __file__
+# FILEPATH = os.path.abspath(fwFile)
+# FILEPATH = sys.argv[1] if sys.argv[1:] else __file__
 
 class SimpleHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
+        ####
+        ##testing...
+        print ("self path ", self.path)
+        # FILEPATH = os.path.abspath(self.path)
+        FILEPATH = fwFolder+self.path
+        print ("file path", FILEPATH)
+        ###
+
         with open(FILEPATH, 'rb') as f:
             self.send_response(200)
             self.send_header("Content-Type", 'application/octet-stream')
@@ -39,7 +49,8 @@ def test(HandlerClass=SimpleHTTPRequestHandler,
     httpd = BaseHTTPServer.HTTPServer(server_address, HandlerClass)
 
     sa = httpd.socket.getsockname()
-    print("Serving HTTP on {0[0]} port {0[1]} ... {1}".format(sa, FILEPATH))
+    # print("Serving HTTP on {0[0]} port {0[1]} ... {1}".format(sa, FILEPATH))
+    print("Web Server HTTP on {0[0]} port {0[1]}".format(sa))
     httpd.serve_forever()
 
 if __name__ == '__main__':
