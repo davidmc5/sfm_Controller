@@ -7,7 +7,7 @@ from subprocess import call
 from threading import Timer
 from threading import Thread
 import paho.mqtt.client as mqtt
-from datetime import datetime, timezone
+from datetime import datetime
 
 # import RPi.GPIO as GPIO
 import time
@@ -24,7 +24,7 @@ from mqtt_credentials import *
 # set this to primary or backup
 # the two controllers should monitor each other with keepalives
 # and switch roles when detecting a failure
-mqttClientName = "controller"
+mqttClientId = "NODE-controller"
 
 # siteId is provided by firebase as a reply to a hello message
 siteId = "TEST"
@@ -148,7 +148,7 @@ def parse_topic(topic):
 
 
 # create an instance of the mqtt client
-mqttClient = mqtt.Client(mqttClientName)
+mqttClient = mqtt.Client(mqttClientId)
 mqttClient.username_pw_set(mqttUser, mqttPswd)
 
 # for testing
