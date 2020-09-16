@@ -88,6 +88,12 @@ firebase.auth().onAuthStateChanged(function(user) {
           //Example for testing: It adds a new node to firebase
           var node = "123ABCD"
           var relays = 16
+
+          //////////////////////////////////////////
+          ///////// SITEID IS HARDCODED!!!!
+          //////////////////////////////////////////
+
+
           //set database reference on that nodeId
           var newNode = database.ref('sites/' + siteId + '/nodes/' + node);
           //update database field
@@ -157,6 +163,15 @@ firebase.auth().onAuthStateChanged(function(user) {
           /// GET Private and Public IP addresses
           var wanIp;
           var lanIp;
+
+
+
+          //////////////////////////////////////////
+          ///////// SITEID IS HARDCODED!!!!
+          //////////////////////////////////////////
+
+
+
           //reference for firebase's IP fields
           var ip = database.ref('sites/' + siteId + '/siteConfig/ip');
           const { exec } = require('child_process');
@@ -216,7 +231,12 @@ firebase.auth().onAuthStateChanged(function(user) {
           //https://firebase.google.com/docs/reference/admin/node/admin.database.DataSnapshot
           /////////////////////////////////////////////
           /////// SITEID IS HARDCODED! PRI/SEC CONTROLLERS NEED TO LISTEN TO ALL SITEIDS - NEED TO FIX!!!
-          var switches = database.ref('/sites/55347/switches');
+          /////////////////////////////////////////////////////////////////////////////
+          //var switches = database.ref('/sites/55347/switches');
+          // var switches = database.ref('/sites/demo/switches');
+          var switches = database.ref('/sites/test/switches');
+
+          //////////////////////////////
           ////////////////////////////////////////////////
 
           switches.on('child_changed', function(snapshot) {

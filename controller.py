@@ -38,8 +38,8 @@ mqttTopicMaxLength = 50
 mqttMsgMaxLength = 50
 
 
-
 # Send mqtt commands to node to turn on or off a particular relay
+## cmd = SWITCH:F4CFA2683EE1:true:p:1-2
 def relayControl(cmd):
     if cmd[0] != "SWITCH":
         return
@@ -84,7 +84,11 @@ def on_message(client, userdata, message):
     # print ("Payload: ", str(message.payload.decode("utf-8")))
     print ("Payload: ", payload)
 
-    nodeId = topicKeys[1] #This will be true for all messages published by nodes
+    mqttMsg = (payload.strip().split(':'))    
+    for msg in mqttMsg:
+        print(msg)
+
+    nodeId = topicKeys[1] #This will be true for ALL messages published by nodes
 
     # Handle HELLO message
     # If WAN IP is associated to a siteId -> send siteId to node and add/update node data in firebase
@@ -106,7 +110,7 @@ def on_message(client, userdata, message):
 
 
         #SEND THE SITE ID TO THE NODE IF KNOWN, OTHERWISE NODE SHOULD PROMPT USER FOR SITE ID
-        mqttPub(nodeId, 'siteId', 'ABCDEFGHI')
+        #mqttPub(nodeId, 'siteId', 'ABCDEFGHI')
         # mqttPub(nodeId, 'siteId', '?') #Example to get current setting
 
         # ONCE THE NODE HAS THE CORRECT SITE ID, IT SHOULD SEND A NEW HELLO TO THE SITEID (CONTROLLER)
@@ -127,8 +131,6 @@ def on_message(client, userdata, message):
         f.write("\n")
         f.close()
 
-
-
 def on_connect(client, userdata, flags, rc):
     if rc==0:
         print("connected OK Returned code=",rc)
@@ -145,8 +147,6 @@ def parse_topic(topic):
     #TO (or hello), FROM, target, [index]
     return topic.split('/')
 
-
-
 # create an instance of the mqtt client
 mqttClient = mqtt.Client(mqttClientId)
 mqttClient.username_pw_set(mqttUser, mqttPswd)
@@ -158,7 +158,6 @@ mqttClient.username_pw_set(mqttUser, mqttPswd)
 mqttClient.on_message = on_message #attach function to CALLBACK
 mqttClient.on_log = on_log
 mqttClient.on_connect = on_connect
-
 mqttClient.connect("localhost")
 
 mqttClient.loop_start() # starts mqtt callback loop to display published messages
@@ -207,7 +206,6 @@ def dbSend(key, value):
     sys.stdout.flush()
     # needs a small delay to allow time to flush
     time.sleep(.1)
-
 
 def main():
     '''
