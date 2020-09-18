@@ -85,15 +85,12 @@ firebase.auth().onAuthStateChanged(function(user) {
 
 
           ///vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-          //Example for testing: It adds a new node to firebase
-          var node = "123ABCD"
-          var relays = 16
-
           //////////////////////////////////////////
           ///////// SITEID IS HARDCODED!!!!
           //////////////////////////////////////////
-
-
+          //Example for testing: It adds a new node to firebase
+          var node = "123ABCD"
+          var relays = 16
           //set database reference on that nodeId
           var newNode = database.ref('sites/' + siteId + '/nodes/' + node);
           //update database field
@@ -104,6 +101,7 @@ firebase.auth().onAuthStateChanged(function(user) {
             console.log('Update error: ' + error);
           });
           ///^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 
           //Read data ONCE (this works!)
           //https://firebase.google.com/docs/database/admin/retrieve-data#section-reading-once
@@ -118,6 +116,8 @@ firebase.auth().onAuthStateChanged(function(user) {
           // https://stackoverflow.com/a/51614404
           //https://stackoverflow.com/a/40935483
           //https://stackoverflow.com/a/40455744
+          //https://firebase.google.com/docs/database/usage/optimize
+          /////
           // var sites = database.ref().child('sites');
           // var query = sites.orderByChild("siteConfig/ip/wanIp").equalTo("73.5.142.186");
           // // var query = sites.orderByChild("siteConfig/ip/wanIp").equalTo("73.5.142.187");
@@ -160,17 +160,15 @@ firebase.auth().onAuthStateChanged(function(user) {
           //   bin_1_sw_8: false
         	// });
 
-          /// GET Private and Public IP addresses
-          var wanIp;
-          var lanIp;
-
 
 
           //////////////////////////////////////////
           ///////// SITEID IS HARDCODED!!!!
           //////////////////////////////////////////
 
-
+          /// GET Private and Public IP addresses
+          var wanIp;
+          var lanIp;
 
           //reference for firebase's IP fields
           var ip = database.ref('sites/' + siteId + '/siteConfig/ip');
@@ -222,7 +220,11 @@ firebase.auth().onAuthStateChanged(function(user) {
         	var pyProcess = spawn('python',["controller.py"]);
           //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+
+
+
           // THIS CALLBACK IS EXECUTED EVERYTIME A SWITCH IS MOVED
+
         	// Attach a listener to get a snapshot with the data that has changed
         	// and send that data to the python controller
 
@@ -230,14 +232,24 @@ firebase.auth().onAuthStateChanged(function(user) {
           // GET SNAPSHOT WITH ALL SWITCH Data that changed
           //https://firebase.google.com/docs/reference/admin/node/admin.database.DataSnapshot
           /////////////////////////////////////////////
-          /////// SITEID IS HARDCODED! PRI/SEC CONTROLLERS NEED TO LISTEN TO ALL SITEIDS - NEED TO FIX!!!
+          /////// SITEIDs are HARDCODED! PRI/SEC CONTROLLERS NEED TO LISTEN TO ALL SITEIDS - NEED TO FIX!!!
           /////////////////////////////////////////////////////////////////////////////
+          //https://www.freecodecamp.org/news/javascript-foreach-how-to-loop-through-an-array-in-js/
+          var siteids = ["demo", "test", "demo1", "demo2"];
+          index = 0
+          siteids.forEach(setSwitchesCallbacks);
+          function setSwitchesCallbacks(siteId, index){
+            console.log("SITEid(" + index + "): " + siteId);
+            setTriggers(siteId);
+          }
+
+function setTriggers(siteId){
+          ////vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
           //var switches = database.ref('/sites/55347/switches');
           // var switches = database.ref('/sites/demo/switches');
-          var switches = database.ref('/sites/test/switches');
-
-          //////////////////////////////
-          ////////////////////////////////////////////////
+          // var switches = database.ref('/sites/test/switches');
+          var path = '/sites/'+ siteId + '/switches';
+          var switches = database.ref(path);
 
           switches.on('child_changed', function(snapshot) {
             // //print the switch ID that changed
@@ -252,22 +264,13 @@ firebase.auth().onAuthStateChanged(function(user) {
             var swState = snapshot.child("swState").val();
             var swLogic = snapshot.child("swLogic").val();
 
-            //The new line character \n at the end is needed to flush the message
-            // pyProcess.stdin.write('NodeID:' + nodeId + '\n');
-            //The first parameter is the comand identifyer. ('SWITCH' = relay control)
             var message = 'SWITCH:' + nodeId + ':' + swState + ':' + swLogic;
             console.log("MESSAGE: " + message);
-            pyProcess.stdin.write(message + '\n');
-
-
-            // //get sensor data
-            // pyProcess.stdout.on('data', (data) => {
-            //   // Do something with the data returned from python script
-            //   console.log(data.toString());
-            // });
+            pyProcess.stdin.write(message + '\n'); // '\n' is needed to flush message
           });
-
-
+          /////^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+}
+//setTriggers('test');
 
 
           //get sensor data
