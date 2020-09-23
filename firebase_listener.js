@@ -6,7 +6,7 @@
 //https://www.stanleyulili.com/node/node-modules-learn-how-to-import-and-use-functions-from-another-file/
 //https://stackoverflow.com/a/7612052
 const {apiKey, authDomain, databaseURL, storageBucket, serviceAccountCredentialsPath,siteId,
-        password, email} = require('./google_services.js')
+        password, email} = require('./firebase_credentials.js')
 
 // Fine site ID for a known WAN IP
 //https://stackoverflow.com/a/46615568

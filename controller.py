@@ -84,11 +84,11 @@ def on_message(client, userdata, message):
     # print ("Payload: ", str(message.payload.decode("utf-8")))
     print ("Payload: ", payload)
 
-    mqttMsg = (payload.strip().split(':'))    
-    for msg in mqttMsg:
-        print(msg)
+    # mqttMsg = (payload.strip().split(':'))
+    # for msg in mqttMsg:
+    #     print(msg)
 
-    nodeId = topicKeys[1] #This will be true for ALL messages published by nodes
+    nodeId = topicKeys[1] #The second element is the nodeID for ALL messages published by nodes
 
     # Handle HELLO message
     # If WAN IP is associated to a siteId -> send siteId to node and add/update node data in firebase
